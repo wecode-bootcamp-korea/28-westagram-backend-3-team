@@ -11,6 +11,8 @@ class User(models.Model):
     website       = models.URLField(null=True)
     introduction  = models.TextField(blank=True)
     gender        = models.CharField(max_length=20, null=True)
+    created_at    = models.DateField(auto_now_add=True)
+    updated_at    = models.DateField(auto_now=True)
 
     class Meta:
         db_table = 'users'
