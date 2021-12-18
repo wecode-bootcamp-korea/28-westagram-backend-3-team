@@ -1,5 +1,4 @@
 import json
-from re import M
 
 from django.http            import JsonResponse
 from django.views           import View
@@ -22,7 +21,7 @@ class SignUpView(View):
             validate_password(password)
 
             if User.objects.filter(phone_number=phone_number).exists():
-                raise ValidationError('이미 가입된 핸드폰 번호입니다.')
+                raise ValidationError('INVALID_PHONE_NUMBER')
 
             User.objects.create(
                 phone_number = phone_number,
@@ -32,7 +31,7 @@ class SignUpView(View):
             )
             return JsonResponse({'message': 'CREATED'}, status = 201)
 
-        except KeyError as e:
+        except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
 
         except ValidationError as e:
