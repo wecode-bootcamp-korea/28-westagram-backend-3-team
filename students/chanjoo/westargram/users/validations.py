@@ -1,21 +1,17 @@
 import re
 
-from django.core.exceptions import ValidationError
-
-def validate_email(email):
+def is_valid_email(email):
     REGEX_EMAIL = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 
-    if not re.match(REGEX_EMAIL, email):
-        raise ValidationError('EMAIL_INVALIDATION')
+    # 일치한 부분을 리턴한다, 일치 하지 않으면 nan을 리턴한다...!
+    return bool(re.match(REGEX_EMAIL, email)) # bool 함수의 동작은 python의 특징이다
 
-def validate_password(password):
+def is_valid_password(password):
     REGEX_PASSWORD = '^(?=.*[a-zA-Z])(?=.*[!@#$%^~*+=-])(?=.*[0-9]).{8,}$'
 
-    if not re.match(REGEX_PASSWORD, password):
-        raise ValidationError('PASSWORD_INVALIDATION')
+    return bool(re.match(REGEX_PASSWORD, password))
 
-def validate_phone(phone_number):
+def is_valid_phone_number(phone_number):
     REGEX_PHONE = '^\d{3}-\d{3,4}-\d{4}$'
 
-    if not re.match(REGEX_PHONE, phone_number):
-        raise ValidationError('PHONE_NUMBER_INVALIDATION')
+    return bool(re.match(REGEX_PHONE, phone_number))
