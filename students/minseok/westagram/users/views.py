@@ -14,11 +14,11 @@ class SignupView(View):
         data = json.loads(request.body)
         
         try:
-            name = data['name']
-            email = data['email']
-            password = data['password']
+            name         = data['name']
+            email        = data['email']
+            password     = data['password']
             phone_number = data['phone_number']
-            user_name = data['user_name']
+            user_name    = data['user_name']
 
             validation_email(email)
             validation_password(password)
@@ -27,11 +27,11 @@ class SignupView(View):
                 return JsonResponse({"message" : "exists email"}, status=400)
 
             User.objects.create(
-                name = name,
-                email = email,
-                password = password,
+                name         = name,
+                email        = email,
+                password     = password,
                 phone_number = phone_number,
-                user_name = user_name
+                user_name    = user_name
             )
             return JsonResponse({"message" : "SUSSESS"}, status=201)
 
