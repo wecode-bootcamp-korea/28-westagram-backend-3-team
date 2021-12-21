@@ -26,7 +26,7 @@ class SignUpView(View):
             if not is_valid_password(password):
                 raise ValidationError('INVALID_PASSWORD')
 
-            hashed_password  = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode()
+            hashed_password  = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
             if User.objects.filter(email=email).exists():
                 raise ValidationError('DUPLICATED_EMAIL')
