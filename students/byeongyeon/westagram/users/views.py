@@ -17,18 +17,21 @@ class RegisterView(View):
         try:
             if User.objects.filter(email=email).exists():
                 return JsonResponse({"message": "Email is already in use"}, status=400)
+
             if not validate_email(email):
                 return JsonResponse({"message": "Email format is invalid"}, status=400)
+
             if not validate_password(password):
                 return JsonResponse({"message": "Password format is invalid"}, status=400)
+                
             if not validate_mobile(mobile):
                 return JsonResponse({"message": "Mobile number format is invalid"}, status=400)
 
             User.objects.create(
+                email    = email,
+                password = password,
+                mobile   = mobile,
                 name     = data['name'],
-                email    = data['email'],
-                password = data['password'],
-                mobile   = data['mobile'],
                 address  = data['address'],
                 age      = data['age']
             )
