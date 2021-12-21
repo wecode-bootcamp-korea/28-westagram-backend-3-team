@@ -1,18 +1,16 @@
 import json
-import bcrypt
-import jwt
-from datetime import datetime, timedelta
+from datetime     import datetime, timedelta
 from json.decoder import JSONDecodeError
 
+import bcrypt
+import jwt
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError
-from jwt.exceptions import ExpiredSignatureError
-from my_settings import ALGORITHM, SECRET_KEY
 
+from my_settings       import ALGORITHM, SECRET_KEY
 from users.models      import User
 from users.validations import is_valid_password, is_valid_email
-
 
 class SignUpView(View):
     def post(self, request):
