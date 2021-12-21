@@ -54,9 +54,7 @@ class LoginView(View):
             validation_password(password)
 
             user = User.objects.get(email = email)
-
-            User.DoesNotExist()
-
+            
             if user.password != password:
                 raise ValidationError('Invalid Password')
 
