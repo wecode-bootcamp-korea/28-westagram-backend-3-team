@@ -54,14 +54,13 @@ class LoginView(View):
             validation_email(email)
             validation_password(password)
 
-            user = User.objects.get(
-                email = email
-            )
+            user = User.objects.get(email = email)
+            
             if user.email != email:
                 raise User.DoesNotExist()
 
             if user.password != password:
-                raise ValidationError('The password is wrong')
+                raise ValidationError('Invalid Password')
 
             return JsonResponse({"message" : "SUSSESS"}, status=200)
 
