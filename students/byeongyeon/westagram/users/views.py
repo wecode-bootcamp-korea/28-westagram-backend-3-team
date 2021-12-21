@@ -33,3 +33,18 @@ class RegisterView(View):
         except KeyError:
             return JsonResponse({"message": "KEY_CRROR"}, status=400)
 
+class SignInView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        try:
+            if not User.objects.filter(email=data["email"]).exists():
+                return JsonResponse({"message": "INVALID_USER"}, status=401)
+            registered_user_password = User.objects.filter(email=data['email'])[0].password         # email은 고유값이므로 [0].password로 비밀번호를 가져온다. 비슷하게 get().password 사용할 수도 있다.
+            if data["password"] != registered_user_password:
+                return JsonResponse({"message": "INVALID_USER"}, status=401)
+            else:
+                return JsonResponse({"message": "SUCCESS"}, status=200)
+        
+        except KeyError:
+            return JsonResponse({"message": "KEY_ERROR"}, status=401)

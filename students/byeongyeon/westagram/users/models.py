@@ -5,7 +5,7 @@ from django.db import models
 class User(models.Model):
     name       = models.CharField(max_length=50)
     email      = models.CharField(max_length=100, unique=True)
-    password   = models.CharField(max_length=256)             #암호화를 대비한 max_length 설정
+    password   = models.CharField(max_length=256)             
     mobile     = models.CharField(max_length=50)
     age        = models.PositiveIntegerField()
     address    = models.CharField(max_length=500)
