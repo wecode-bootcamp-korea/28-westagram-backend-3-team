@@ -63,7 +63,9 @@ class LoginView(View):
             if not User.objects.filter(email=email).exists():
                 raise ValidationError('INVALID_EMAIL')
 
-            if not User.objects.filter(password=password).exists():
+            hashed_password  = User.objects.get(email=email).password.encode('utf-8')
+
+            if not bcrypt.checkpw(password.encode('utf-8'), hashed_password):
                 raise ValidationError('INVALID_PASSWORD')
 
             return JsonResponse({'message':'SUCCESS'}, status=200)
