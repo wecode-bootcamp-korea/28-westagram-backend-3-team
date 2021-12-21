@@ -48,3 +48,25 @@ class SignUpView(View):
 
         except JSONDecodeError:
             return JsonResponse({'message':'INVALID_JSON'}, status=400)
+
+class LoginView(View):
+    def post(self, request):
+        try:
+            user_info = json.loads(request.body)
+
+            email    = user_info['email']
+            password = user_info['password']
+
+            if not User.objects.filter(email=email).exists():
+                raise ValidationError('INVALID_EMAIL')
+
+            if not User.objects.filter(password=password).exists():
+                raise ValidationError('INVALID_PASSWORD')
+
+            return JsonResponse({'message':'SUCCESS'}, status=200)
+
+        except KeyError:
+            return JsonResponse({'message':'KEY_ERROR'}, status=400)
+
+        except ValidationError as e:
+            return JsonResponse({'message':e.message}, status=401)
