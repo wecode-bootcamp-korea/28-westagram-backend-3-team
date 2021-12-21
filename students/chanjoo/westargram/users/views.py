@@ -1,10 +1,14 @@
 import json
 import bcrypt
+import jwt
+from datetime import datetime, timedelta
 from json.decoder import JSONDecodeError
 
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError
+from jwt.exceptions import ExpiredSignatureError
+from my_settings import ALGORITHM, SECRET_KEY
 
 from users.models      import User
 from users.validations import is_valid_password, is_valid_email
@@ -63,12 +67,15 @@ class LoginView(View):
             if not User.objects.filter(email=email).exists():
                 raise ValidationError('INVALID_EMAIL')
 
-            hashed_password  = User.objects.get(email=email).password.encode('utf-8')
+            user = User.objects.get(email=email)
 
-            if not bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+            if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 raise ValidationError('INVALID_PASSWORD')
 
-            return JsonResponse({'message':'SUCCESS'}, status=200)
+            data = {'user_id': user.id, 'exp':datetime.now() + timedelta(days=7)}
+            access_token = jwt.encode(data, SECRET_KEY, ALGORITHM)
+
+            return JsonResponse({'access_token': access_token}, status=200)
 
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
