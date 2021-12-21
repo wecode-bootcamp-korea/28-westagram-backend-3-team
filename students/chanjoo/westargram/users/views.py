@@ -60,7 +60,9 @@ class LoginView(View):
             if not User.objects.filter(email=email).exists():
                 raise ValidationError('INVALID_EMAIL')
 
-            if not User.objects.filter(password=password).exists():
+            user = User.objects.get(email=email)
+
+            if user.password != password:
                 raise ValidationError('INVALID_PASSWORD')
 
             return JsonResponse({'message':'SUCCESS'}, status=200)
