@@ -1,5 +1,3 @@
-Views.py
-
 import json
 
 import re
@@ -44,5 +42,6 @@ class SignUpView(View):
                 password = data['password']
             )
             return JsonResponse({"message" : "SUCCESS"}, status=201)
+            
         except KeyError:
             return JsonResponse({"message" : "KEY-ERROR"}, status=400)
