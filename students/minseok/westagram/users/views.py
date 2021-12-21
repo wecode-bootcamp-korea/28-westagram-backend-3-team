@@ -1,12 +1,13 @@
-from django.shortcuts import render
-
+#전체 모듈
 import json
 
-from django.http import JsonResponse
-from django.views import View
+#외부 모듈
+from django.http            import JsonResponse
+from django.views           import View
 from django.core.exceptions import ValidationError
 
-from users.models import User
+#내부 모듈
+from users.models      import User
 from users.validations import validation_email, validation_password
 
 class SignupView(View):
@@ -24,7 +25,7 @@ class SignupView(View):
             validation_password(password)
             
             if User.objects.filter(email=email).exists():
-                return JsonResponse({"message" : "exists email"}, status=400)
+                return JsonResponse({"message" : "The email already exists"}, status=400)
 
             User.objects.create(
                 name         = name,
@@ -39,4 +40,4 @@ class SignupView(View):
             return JsonResponse({"message" : e.message}, status=400)
         
         except KeyError:
-            return JsonResponse({'message':'KEY_ERROR'}, status=400)
+            return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
