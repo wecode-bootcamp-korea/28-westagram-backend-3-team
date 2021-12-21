@@ -5,6 +5,7 @@ import json
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError
+from django.db              import DatabaseError
 
 #내부 모듈
 from users.models           import User
@@ -56,13 +57,19 @@ class LoginView(View):
             user = User.objects.get(
                 email = email
             )
+            if user.email != email:
+                raise User.DoesNotExist()
+
             if user.password != password:
-                raise Exception('The password is wrong')
+                raise ValidationError('The password is wrong')
 
             return JsonResponse({"message" : "SUSSESS"}, status=200)
 
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
 
-        except:
+        except ValidationError as e:
+            return JsonResponse({"message" : e.message})
+
+        except User.DoesNotExist:
             return JsonResponse({"message" : "INVALID_USER"}, status=401)
