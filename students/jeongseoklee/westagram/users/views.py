@@ -7,8 +7,6 @@ from django.views import View
 
 from .models      import User
 
-email_validator    = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
-password_validator = re.compile('^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$')
 
 class SignUpView(View):
     def post(self, request):
@@ -18,10 +16,13 @@ class SignUpView(View):
             email = data['email']
             password = data['password']
 
-            if not email_validator.match(data['email']):
+            email_validator    = re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email)
+            password_validator = re.match('^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$', password)
+
+            if not email_validator:
                 return JsonResponse({"message" : "INVALID EMAIL"}, status=400)
 
-            if not password_validator.match(data['password']):
+            if not password_validator:
                 return JsonResponse({"message" : "INVALID PASSWORD"}, status=400)
 
             if User.objects.filter(email=email).exists():
