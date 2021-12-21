@@ -29,9 +29,9 @@ class SignUpView(View):
                 return JsonResponse({"message" : "EXISTED EMAIL"}, status=400)
 
             User.objects.create(
-                email = email,
+                email    = email,
                 password = password,
-                mobile = data['mobile'],
+                mobile   = data['mobile'],
                 username = data['username'],
             )
             return JsonResponse({"message" : "SUCCESS"}, status=201)
