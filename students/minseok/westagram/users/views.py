@@ -7,8 +7,8 @@ from django.views           import View
 from django.core.exceptions import ValidationError
 
 #내부 모듈
-from users.models      import User
-from users.validations import validation_email, validation_password
+from users.models           import User
+from users.validations      import validation_email, validation_password
 
 class SignupView(View):
     def post(self, request):
