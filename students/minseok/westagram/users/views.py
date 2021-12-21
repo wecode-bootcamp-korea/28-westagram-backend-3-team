@@ -5,7 +5,6 @@ import json
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError
-from django.db              import DatabaseError
 
 #내부 모듈
 from users.models           import User
@@ -55,9 +54,8 @@ class LoginView(View):
             validation_password(password)
 
             user = User.objects.get(email = email)
-            
-            if user.email != email:
-                raise User.DoesNotExist()
+
+            User.DoesNotExist()
 
             if user.password != password:
                 raise ValidationError('Invalid Password')
