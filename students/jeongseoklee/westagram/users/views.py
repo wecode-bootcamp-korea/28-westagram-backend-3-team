@@ -1,6 +1,7 @@
 import json
 
 import re
+import bcrypt
 
 from django.http  import JsonResponse
 from django.views import View
@@ -11,6 +12,7 @@ from .models      import User
 class SignUpView(View):
     def post(self, request):
         data = json.loads(request.body)
+        
 
         try:
             email = data['email']
@@ -18,6 +20,8 @@ class SignUpView(View):
 
             REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             REGEX_PASSWORD = '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$'
+
+            encoded_password = password.encode('utf-8')
 
             if not re.match(REGEX_EMAIL, email):
                 return JsonResponse({"message" : "INVALID EMAIL"}, status=400)
@@ -48,11 +52,10 @@ class LoginView(View):
             email    = data['email']
             password = data['password']
             
-            if not User.objects.filter(email=email).exists():
-                return JsonResponse({"message" : "INVALID EMAIL"}, status=401)
-
-            if User.objects.filter(email=email, password=password).exists():
-                return JsonResponse({"message" : "LOGIN SUCCESS"}, status=200)
+            if not User.objects.filter(email=email, password=password).exists():
+                return JsonResponse({"message" : "INVALID USER"}, status=401)
+            
+            return JsonResponse({"message" : "LOGIN SUCCESS"}, status=200)
 
         except KeyError:
             return JsonResponse({"message" : "KEY-ERROR"}, status=400)
