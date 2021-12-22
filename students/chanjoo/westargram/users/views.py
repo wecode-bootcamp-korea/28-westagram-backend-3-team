@@ -62,15 +62,12 @@ class LoginView(View):
             email    = user_info['email']
             password = user_info['password']
 
-            if not User.objects.filter(email=email).exists():
-                raise ValidationError('INVALID_EMAIL')
+            if not User.objects.filter(email=email, password=password.encode('utf-8')).exists():
+                raise ValidationError('INVALID_USER')
 
             user = User.objects.get(email=email)
 
-            if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                raise ValidationError('INVALID_PASSWORD')
-
-            data = {'user_id': user.id, 'exp':datetime.now() + timedelta(days=7)}
+            data = {'user_id': user.id, 'exp':datetime.now() + timedelta(days=1)}
             access_token = jwt.encode(data, SECRET_KEY, ALGORITHM)
 
             return JsonResponse({'access_token': access_token}, status=200)
