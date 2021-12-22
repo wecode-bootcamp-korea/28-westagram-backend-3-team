@@ -32,7 +32,7 @@ class RegisterView(View):
 
             User.objects.create(
                 email    = email,
-                password = encoded_password,
+                password = encoded_password.decode('utf-8'),
                 mobile   = mobile,
                 name     = data['name'],
                 address  = data['address'],
