@@ -1,5 +1,6 @@
 #전체 모듈
 import json
+import bcrypt
 
 #외부 모듈
 from django.http            import JsonResponse
@@ -50,11 +51,8 @@ class LoginView(View):
             email    = users['email']
             password = users['password']
 
-            validation_email(email)
-            validation_password(password)
-
             user = User.objects.get(email = email)
-            
+
             if user.password != password:
                 raise ValidationError('Invalid Password')
 
