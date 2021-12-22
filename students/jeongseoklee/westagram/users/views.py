@@ -1,7 +1,6 @@
 import json
 
 import re
-import bcrypt
 
 from django.http  import JsonResponse
 from django.views import View
@@ -20,8 +19,6 @@ class SignUpView(View):
 
             REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             REGEX_PASSWORD = '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$'
-
-            encoded_password = password.encode('utf-8')
 
             if not re.match(REGEX_EMAIL, email):
                 return JsonResponse({"message" : "INVALID EMAIL"}, status=400)
