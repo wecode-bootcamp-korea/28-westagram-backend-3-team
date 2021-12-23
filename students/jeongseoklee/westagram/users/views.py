@@ -20,7 +20,7 @@ class SignUpView(View):
             REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             REGEX_PASSWORD = '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$'
             
-            hashed_password = bcypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()). decode('utf-8')
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()). decode('utf-8')
 
             if not re.match(REGEX_EMAIL, email):
                 return JsonResponse({"message" : "INVALID EMAIL"}, status=400)
@@ -50,7 +50,7 @@ class LoginView(View):
             email    = data['email']
             password = data['password']
             user     = User.objects.get(email=email)
-
+            
             if not User.objects.filter(email=email).exists():
                 return JsonResponse({"message" : "INVALID EMAIL"}, status=401)
 
@@ -61,3 +61,5 @@ class LoginView(View):
 
         except KeyError:
             return JsonResponse({"message" : "KEY-ERROR"}, status=400)
+        except User.DoesNotExist:
+            return JsonResponse({"message" : "INVALID EMAIL"}, status=404)
