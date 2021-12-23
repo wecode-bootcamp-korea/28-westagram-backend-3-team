@@ -1,5 +1,6 @@
 #전체 모듈
 import json
+import bcrypt
 
 #외부 모듈
 from django.http            import JsonResponse
@@ -41,3 +42,27 @@ class SignupView(View):
         
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
+
+class LoginView(View):
+    def post(self, request):
+        users = json.loads(request.body)
+        
+        try:
+            email    = users['email']
+            password = users['password']
+
+            user = User.objects.get(email = email)
+
+            if user.password != password:
+                raise ValidationError('Invalid Password')
+
+            return JsonResponse({"message" : "SUSSESS"}, status=200)
+
+        except KeyError:
+            return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
+
+        except ValidationError as e:
+            return JsonResponse({"message" : e.message})
+
+        except User.DoesNotExist:
+            return JsonResponse({"message" : "INVALID_USER"}, status=401)

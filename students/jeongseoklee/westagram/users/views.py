@@ -11,6 +11,7 @@ from .models      import User
 class SignUpView(View):
     def post(self, request):
         data = json.loads(request.body)
+        
 
         try:
             email = data['email']
@@ -35,6 +36,23 @@ class SignUpView(View):
                 username = data['username'],
             )
             return JsonResponse({"message" : "SUCCESS"}, status=201)
+
+        except KeyError:
+            return JsonResponse({"message" : "KEY-ERROR"}, status=400)
+
+
+class LoginView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        try:
+            email    = data['email']
+            password = data['password']
+            
+            if not User.objects.filter(email=email, password=password).exists():
+                return JsonResponse({"message" : "INVALID USER"}, status=401)
+            
+            return JsonResponse({"message" : "LOGIN SUCCESS"}, status=200)
 
         except KeyError:
             return JsonResponse({"message" : "KEY-ERROR"}, status=400)
