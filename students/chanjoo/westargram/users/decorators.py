@@ -7,15 +7,14 @@ from my_settings import SECRET_KEY, ALGORITHM
 from users.models import User
 
 def login_required(func):
-    def wrapper(self, request):
+    def wrapper(self, request, *args, **kwargs):
         try:
             access_token = request.headers['Authorization']
             payload      = jwt.decode(access_token, SECRET_KEY, algorithms=ALGORITHM)
+            user         = User.objects.get(id=payload['id'])
+            request.user = user
 
-            if not User.objects.filter(id=payload['user_id']).exists():
-                raise ValidationError({'message':'USER_DOES_NOT_EXISTS'})
-
-            return func(self, request)
+            return func(self, request, *args, **kwargs)
 
         except KeyError:
             return JsonResponse({'message':'NO_TOKEN'}, status=400)
@@ -25,5 +24,8 @@ def login_required(func):
 
         except ExpiredSignatureError:
             return JsonResponse({'message':'EXPIRED_TOKEN'}, status=401)
+
+        except User.DoesNotExist:
+            return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=400)
 
     return wrapper
