@@ -67,7 +67,7 @@ class LoginView(View):
 
             user = User.objects.get(email=email)
 
-            data = {'user_id': user.id, 'exp':datetime.now() + timedelta(days=1)}
+            data         = {'user_id': user.id, 'exp':datetime.now() + timedelta(days=1)}
             access_token = jwt.encode(data, SECRET_KEY, ALGORITHM)
 
             return JsonResponse({'access_token': access_token}, status=200)
