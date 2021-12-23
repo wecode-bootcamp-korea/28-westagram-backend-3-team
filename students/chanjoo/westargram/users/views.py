@@ -1,14 +1,16 @@
 import json
-import bcrypt
+from datetime     import datetime, timedelta
 from json.decoder import JSONDecodeError
 
+import bcrypt
+import jwt
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError
 
+from my_settings       import ALGORITHM, SECRET_KEY
 from users.models      import User
 from users.validations import is_valid_password, is_valid_email
-
 
 class SignUpView(View):
     def post(self, request):
@@ -61,14 +63,17 @@ class LoginView(View):
             password = user_info['password']
 
             if not User.objects.filter(email=email).exists():
-                raise ValidationError('INVALID_EMAIL')
+                raise ValidationError('INVALID_USER')
 
-            hashed_password  = User.objects.get(email=email).password.encode('utf-8')
+            user = User.objects.get(email=email)
 
-            if not bcrypt.checkpw(password.encode('utf-8'), hashed_password):
-                raise ValidationError('INVALID_PASSWORD')
+            if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                raise ValidationError('INVALID_USER')
 
-            return JsonResponse({'message':'SUCCESS'}, status=200)
+            data         = {'id': user.id, 'exp':datetime.now() + timedelta(days=1)}
+            access_token = jwt.encode(data, SECRET_KEY, ALGORITHM)
+
+            return JsonResponse({'access_token': access_token}, status=200)
 
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
