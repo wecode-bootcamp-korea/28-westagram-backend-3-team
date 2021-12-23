@@ -1,6 +1,7 @@
 import json
 
 import re
+import bcrypt
 
 from django.http  import JsonResponse
 from django.views import View
@@ -12,13 +13,14 @@ class SignUpView(View):
     def post(self, request):
         data = json.loads(request.body)
         
-
         try:
-            email = data['email']
+            email    = data['email']
             password = data['password']
 
             REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             REGEX_PASSWORD = '^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$'
+            
+            hashed_password = bcypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()). decode('utf-8')
 
             if not re.match(REGEX_EMAIL, email):
                 return JsonResponse({"message" : "INVALID EMAIL"}, status=400)
@@ -31,7 +33,7 @@ class SignUpView(View):
 
             User.objects.create(
                 email    = email,
-                password = password,
+                password = hashed_password,
                 mobile   = data['mobile'],
                 username = data['username'],
             )
@@ -48,9 +50,14 @@ class LoginView(View):
         try:
             email    = data['email']
             password = data['password']
+
+            encoded_password = encode.password('utf-8')
+            hashed_password  = password.endcode('utf-8')
             
-            if not User.objects.filter(email=email, password=password).exists():
-                return JsonResponse({"message" : "INVALID USER"}, status=401)
+            if not User.objects.filter(email=email).exists():
+                return JsonResponse({"message" : "INVALID EMAIL"}, status=401)
+            if not bcrypt.checkpw(encoded_password, hashed_password):
+                return JsonResponse({"message" : "INCORRECT PASSWORD"}, status=401)
             
             return JsonResponse({"message" : "LOGIN SUCCESS"}, status=200)
 
