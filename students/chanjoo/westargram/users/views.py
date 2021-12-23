@@ -62,7 +62,7 @@ class LoginView(View):
             email    = user_info['email']
             password = user_info['password']
 
-            if not User.objects.filter(email=email, password=password.encode('utf-8')).exists():
+            if not User.objects.filter(email=email).exists():
                 raise ValidationError('INVALID_USER')
 
             user = User.objects.get(email=email)
