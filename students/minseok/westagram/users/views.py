@@ -16,7 +16,6 @@ class SignupView(View):
         data = json.loads(request.body)
         
         try:
-            # print(data)
             name         = data['name']
             email        = data['email']
             password     = data['password']
@@ -29,12 +28,12 @@ class SignupView(View):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({"message" : "The email already exists"}, status=400)
             
-            hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
             User.objects.create(
                 name         = name,
                 email        = email,
-                password     = hashed_pw,
+                password     = hashed_password,
                 phone_number = phone_number,
                 user_name    = user_name
             )
@@ -54,11 +53,14 @@ class LoginView(View):
             email    = users['email']
             password = users['password']
 
-            user = User.objects.get(email = email)
-            hashed_pw = user.password.encode('utf-8')
-            bcrypt.checkpw(password.encode('utf-8'), hashed_pw)
+            user            = User.objects.get(email = email)
+            hashed_password = user.password.encode('utf-8')
+            bcrypt.checkpw(password.encode('utf-8'), hashed_password)
 
-            if user.password.encode('utf-8') != hashed_pw:
+            if not User.objects.filter(email=email).exists():
+                return JsonResponse({"message" : "The email not exists"}, status=400)            
+
+            if user.password.encode('utf-8') != hashed_password:
                 raise ValidationError('Invalid Password')
 
             return JsonResponse({"message" : "SUSSESS"}, status=200)
