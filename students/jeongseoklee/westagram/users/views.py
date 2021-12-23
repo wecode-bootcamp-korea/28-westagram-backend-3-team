@@ -42,7 +42,6 @@ class SignUpView(View):
         except KeyError:
             return JsonResponse({"message" : "KEY-ERROR"}, status=400)
 
-
 class LoginView(View):
     def post(self, request):
         data = json.loads(request.body)
@@ -50,13 +49,12 @@ class LoginView(View):
         try:
             email    = data['email']
             password = data['password']
+            user     = User.objects.get(email=email)
 
-            encoded_password = encode.password('utf-8')
-            hashed_password  = password.endcode('utf-8')
-            
             if not User.objects.filter(email=email).exists():
                 return JsonResponse({"message" : "INVALID EMAIL"}, status=401)
-            if not bcrypt.checkpw(encoded_password, hashed_password):
+
+            if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({"message" : "INCORRECT PASSWORD"}, status=401)
             
             return JsonResponse({"message" : "LOGIN SUCCESS"}, status=200)
