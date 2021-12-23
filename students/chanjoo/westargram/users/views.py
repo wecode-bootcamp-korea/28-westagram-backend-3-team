@@ -67,6 +67,9 @@ class LoginView(View):
 
             user = User.objects.get(email=email)
 
+            if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                raise ValidationError('INVALID_USER')
+
             data         = {'user_id': user.id, 'exp':datetime.now() + timedelta(days=1)}
             access_token = jwt.encode(data, SECRET_KEY, ALGORITHM)
 
