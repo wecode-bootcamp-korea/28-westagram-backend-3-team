@@ -43,7 +43,7 @@ class RegisterView(View):
             return JsonResponse({"message":"SUCCESS"}, status=201)
 
         except KeyError:
-            return JsonResponse({"message": "KEY_CRROR"}, status=400)
+            return JsonResponse({"message": "KEY_ERROR"}, status=400)
 
 class SignInView(View):
     def post(self, request):
